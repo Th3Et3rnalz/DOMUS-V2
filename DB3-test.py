@@ -1,5 +1,9 @@
 #!/usr/bin/python
 
+"""
+To add users and see their passwords
+"""
+
 import sqlite3
 from passlib.hash import pbkdf2_sha256
 
