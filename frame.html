@@ -1,0 +1,87 @@
+$def with (elements, nelements)
+
+<!-- <h1>$elements</h1>
+<h1>$nelements</h1> -->
+<div id="boxes"></div>
+
+<script>
+	var btnNm
+	var myObject = {};
+	function btnclick(value) {
+		console.log(value);
+		console.log(value.id);
+		value.style.background = "green";
+		console.log("A button was pressed");
+		
+	    var xmlHttp = new XMLHttpRequest();
+	    xmlHttp.onreadystatechange = function() {
+			if (this.responseText !== ""){
+				console.log(this.responseText);
+			};
+		};
+		xmlHttp.open( "GET", "./btn?name=" + value.id + "&username="+document.cookie, true );
+		xmlHttp.send();
+	};
+	
+	function buildHTML(data, btnNumber){
+		var array = data.split('.');
+		var varname = "val" + btnNumber;
+		window[varname] = array;
+		btnNm = window[varname][0];
+		var type = window[varname][1];
+		var value = window[varname][2];
+		var location = window[varname][3];
+		if (type == "led") {
+			btnNm = btnNm.replace(" ","");
+			var html = '<div id="'+btnNm+'" class="led" onclick="btnclick('+btnNm+')"><h1>' + btnNm + '</h1><h1>' + value + '</h1><h1>' + location + '</h1></div>';
+			return html;
+		} else if (type == "door"){
+			var html = '<div class="door"><h1>' + name + '</h1><h1>' + value + '</h1><h1>' + location + '</h1></div>';
+			return html;
+		} else {
+			return "<p>Some boring shit</p>"
+		};
+	};	
+	function Printing() {
+		var x = document.cookie;
+		console.log("You have a cookie: "+x);
+		for (i = 0; i < $nelements; i++) { 
+			var str = "$elements";
+			console.log(str);
+			var array = str.split(',');
+			
+			var number = i;
+			
+			myObject[number] = array[i];
+			
+			console.log("Testing: " + myObject[i]);
+			
+			window.last = i;
+		};
+		var el = document.getElementById("boxes");
+		for (i = 0; i <= window.last; i++) {
+			console.log(myObject[i]);
+			el.innerHTML += buildHTML(myObject[i],i);
+		};
+	};
+
+	window.onunload = Printing();
+</script>
+
+<style>
+.led, .door{
+	width: 200px;
+	height: 150px;
+	background-color: red;
+	display: inline-block;
+	margin: 10px;
+	padding: 5px;
+}
+.door{
+	background-color: blue;
+}
+.led > h1, .door > h1{
+	color: pink;
+	font-size: 1.5em;
+}
+</style>

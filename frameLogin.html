@@ -1,0 +1,34 @@
+$def with (form)
+<!DOCTYPE html>
+	<form name="main" method="post">
+	<h1> Log In</h1>
+	$if not form.valid: <p class="error">Try again, AmeriCAN:</p>
+	$:form.render()
+	<p></p>
+	<input onclick="WriteCookie()" type="submit" />    </form>
+</html>
+
+<script>
+	function WriteCookie(){
+			var user = document.getElementById("Username");
+			console.log(user.value);
+			document.cookie = user.value;
+	}
+
+</script>
+
+<style>
+html{
+	width: 100%;
+	height: 100%;
+	background-image: url("http://192.168.60.124:8080/images?name=light.jpg");
+	background-repeat: no-repeat;
+	background-size: 100% 100%;
+}
+form{
+	width: 300px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-top: 200px;
+}
+</style>
