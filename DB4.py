@@ -1,5 +1,10 @@
 #!/usr/bin/python
 
+"""
+To add buttons on the webpage
+if location is a pin number, then you can create buttons (on the webpage) that control pins
+"""
+
 import sqlite3
 
 user = raw_input("USER? ")
