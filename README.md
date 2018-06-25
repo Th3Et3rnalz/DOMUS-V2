@@ -4,3 +4,10 @@ You can add users and devices to a sqlite database (python tool included) and th
 IMPORTANT: frame.html and frameLogin.html must be placed in the Templates folder on linux. Otherwise change filepath
 
 This is seperate from the previous version because it works differently (and I haven't spent as much time working on the web design).
+
+I have built this on a raspberry pi as a test bench.
+Required libraries:
+  web.py
+  sqlite3
+  Raspi.GPIO
+  Optional: pdkf2 sha 256 encrytion library (forget the name, but is in the python files)
