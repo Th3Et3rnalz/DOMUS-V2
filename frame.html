@@ -7,16 +7,29 @@ $def with (elements, nelements)
 <script>
 	var btnNm
 	var myObject = {};
+	
+	function changeHTML(id, value){
+		el = document.getElementById(id).firstChild.nextSibling;
+		el.innerHTML = value;
+	}
+	
 	function btnclick(value) {
-		console.log(value);
-		console.log(value.id);
 		value.style.background = "green";
 		console.log("A button was pressed");
 		
 	    var xmlHttp = new XMLHttpRequest();
+	    var answer;
 	    xmlHttp.onreadystatechange = function() {
 			if (this.responseText !== ""){
-				console.log(this.responseText);
+				answer = this.responseText;
+				answer = answer.replace("(","");
+				answer = answer.replace(")","");
+				answer = answer.replace("u","");
+				answer = answer.replace("'","");
+				answer = answer.replace("',",",");
+				answer = answer.replace(" ","");
+				nameID = answer.split(",");
+				changeHTML(nameID[0],nameID[1]);
 			};
 		};
 		xmlHttp.open( "GET", "./btn?name=" + value.id + "&username="+document.cookie, true );
@@ -36,10 +49,11 @@ $def with (elements, nelements)
 			var html = '<div id="'+btnNm+'" class="led" onclick="btnclick('+btnNm+')"><h1>' + btnNm + '</h1><h1>' + value + '</h1><h1>' + location + '</h1></div>';
 			return html;
 		} else if (type == "door"){
-			var html = '<div class="door"><h1>' + name + '</h1><h1>' + value + '</h1><h1>' + location + '</h1></div>';
+			var html = '<div class="door"><h1>' + btnNm + '</h1><h1>' + value + '</h1><h1>' + location + '</h1></div>';
 			return html;
 		} else {
-			return "<p>Some boring shit</p>"
+			var html = '<div class="rest"><h1>' + btnNm + '</h1><h1>' + value + '</h1><h1>' + location + '</h1></div>';
+			return html;
 		};
 	};	
 	function Printing() {
@@ -47,15 +61,9 @@ $def with (elements, nelements)
 		console.log("You have a cookie: "+x);
 		for (i = 0; i < $nelements; i++) { 
 			var str = "$elements";
-			console.log(str);
 			var array = str.split(',');
-			
-			var number = i;
-			
-			myObject[number] = array[i];
-			
-			console.log("Testing: " + myObject[i]);
-			
+			var number = i;			
+			myObject[number] = array[i];			
 			window.last = i;
 		};
 		var el = document.getElementById("boxes");
