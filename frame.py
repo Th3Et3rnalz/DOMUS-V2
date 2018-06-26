@@ -2,30 +2,36 @@ import web, sqlite3
 from web import form
 import RPi.GPIO as GPIO
 
+# ---GPIO SETUP---
 GPIO.setmode(GPIO.BOARD)
 GPIO.setwarnings(False)
 
+# ---SQLITE3 DATABASE SETUP---
 conn = sqlite3.connect("DB.db", check_same_thread=False)
 print "Opened database successfully"
 
+# ---VARIABLE(S)---
 elements = []
 
-def writeNewState(username, pin):
-	userNm = username.replace("'","")
-	userNm = userNm.replace("u","")
-	pinNm = pin.replace("'","")
-	pinNm = pinNm.replace("u","")
-	GPIO.setup(int(pinNm), GPIO.OUT)
-	Value = GPIO.input(int(pinNm))
-	sql = "UPDATE " + userNm + " SET value = '" + str(Value) + "' WHERE location = '"+ pinNm +"'"
+def cleanup(value):
+        answer = value.replace("'", "")
+        answer = answer.replace("u", "")
+        return answer
+
+def writeNewState(username, state):
+	userNm = cleanup(username)
+	stateNm = cleanup(state)
+
+	Value = "NOT A LED"
+	if stateNm.replace("led","").isdigit() == 1: #name as 'led38' igve us the pin number so we can read the value
+                pinNm = stateNm.replace("led", "") #I do this after the if statement because some words have 'led' in them (i.e. deskled)
+                GPIO.setup(int(pinNm), GPIO.OUT)
+                Value = GPIO.input(int(pinNm))
+	sql = "UPDATE " + userNm + " SET value = '" + str(Value) + "' WHERE name = '"+ stateNm +"'"
 	print "Updating the values in the sqlite3 database."
-	print "USERNAME = ", userNm
-	print "PIN      = ", pinNm
-	print "STATE    = ", Value
-	print "SQL      = ", sql
 	conn.execute(sql)
 	conn.commit()
-	return "Led status updated in the database"
+	return "Status updated in the database"
 
 def toggleLed(ledn):
 	GPIO.setup(ledn, GPIO.OUT)
@@ -38,11 +44,9 @@ def toggleLed(ledn):
         return GPIO.input(ledn)
 
 def checkUser(username, password):
-	print username
 	cursor = conn.execute('SELECT * FROM LOGIN WHERE username=?', (username,))
 	for row in cursor:
-		print row[0], row[1], row[2]
-		if row[2] == password:
+                if row[2] == password:
 			global user
 			user = username
 			sql = "SELECT unix, name, type, value, location from "  + user
@@ -52,11 +56,12 @@ def checkUser(username, password):
 			elLen = 0
 			for row in cursor:
 				elLen += 1
+				""" Remove the captions for troubleshooting
 				print "ID       = ", row[0]
 				print "NAME     = ", row[1]
 				print "TYPE     = ", row[2]
 				print "VALUE    = ", row[3]
-				print "LOCATION = ", row[4], "\n"
+				print "LOCATION = ", row[4], "\n """
 				elements.append(row[1] + ".")
 				elements.append(row[2] + ".")
 				elements.append(row[3] + ".")
@@ -101,14 +106,11 @@ class index:
 
 class btnclick:
     def GET(self, name):
-	
-	status = ""
-	pin = web.input().name.replace("led","")
-	returned = writeNewState(web.input().username, pin)
-	print "ANSWER   = ",returned
-	if pin.isdigit() == 1:
-		status = toggleLed(int(pin))
-        return [name, status]
+        status = "FILLER"
+        if web.input().name.replace("led", "").isdigit() == 1:
+                status = toggleLed(int(web.input().name.replace("led","")))
+	returned = writeNewState(web.input().username, web.input().name)
+        return web.input().name, status
 
 
 
