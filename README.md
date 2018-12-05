@@ -10,4 +10,4 @@ Required libraries:
   web.py
   sqlite3
   Raspi.GPIO
-  Optional: pdkf2 sha 256 encrytion library (forget the name, but is in the python files)
+  Optional: pdkf2 sha 256 encrytion library
